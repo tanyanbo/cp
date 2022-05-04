@@ -11,7 +11,7 @@ using namespace std;
 
 class SegmentTree {
   int n;
-  vector<int> st;
+  vector<int> st, lazy;
   void build(int start, int end, int node, vector<int> &v) {
     if (start==end) {
       st[node] = v[start];
@@ -26,6 +26,11 @@ class SegmentTree {
   int query(int start, int end, int l, int r, int node) {
     if (l > end or r < start)
       return 0;
+    if (lazy[node]) {
+      st[node] += lazy[node]*(end - start + 1);
+      lazy[node*2 + 1] = lazy[node], lazy[node*2 + 2] = lazy[node];
+      lazy[node] = 0;
+    }
     if (l <= start and r >= end)
       return st[node];
     int mid = (start + end)/2;
@@ -34,16 +39,26 @@ class SegmentTree {
     return q1 + q2;
   }
 
-  void update(int start, int end, int idx, int node, int value) {
-    int mid = (start + end)/2;
-    if (start==end) {
-      st[node] = value;
+  void update(int start, int end, int l, int r, int node, int value) {
+    if (lazy[node]) {
+      st[node] += lazy[node]*(end - start + 1);
+      if (start!=end) {
+        lazy[node*2 + 1] += lazy[node], lazy[node*2 + 2] += lazy[node];
+      }
+      lazy[node] = 0;
+    }
+    if (start > r or end < l)
+      return;
+    if (start >= l and end <= r) {
+      st[node] += value*(end - start + 1);
+      if (start!=end) {
+        lazy[node*2 + 1] += value, lazy[node*2 + 2] += value;
+      }
       return;
     }
-    if (idx <= mid)
-      update(start, mid, idx, node*2 + 1, value);
-    else
-      update(mid + 1, end, idx, node*2 + 2, value);
+    int mid = (start + end)/2;
+    update(start, mid, l, r, node*2 + 1, value);
+    update(mid + 1, end, l, r, node*2 + 2, value);
     st[node] = st[node*2 + 1] + st[node*2 + 2];
   }
  public:
@@ -53,6 +68,7 @@ class SegmentTree {
       temp *= 2;
     }
     n = temp;
+    lazy = vector<int>(4*n, 0);
     int sz = (int) v.size();
     for (int i = 0; i < temp - sz; i++)
       v.push_back(pad);
@@ -64,8 +80,8 @@ class SegmentTree {
     return query(0, n - 1, l, r, 0);
   }
 
-  void update(int idx, int value) {
-    update(0, n - 1, idx, 0, value);
+  void update(int l, int r, int value) {
+    update(0, n - 1, l, r, 0, value);
   }
 };
 

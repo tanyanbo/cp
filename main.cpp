@@ -49,8 +49,14 @@ int main() {
 //  }
   vector<int> v{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
   SegmentTree segment_tree{v};
-  segment_tree.update(0, 10);
-  segment_tree.update(4, 10);
+//  segment_tree.update(0, 0, 10);
+//  segment_tree.update(4, 4, 10);
   cout << segment_tree.query(2, 6) << "\n";
   cout << segment_tree.query(4, 7) << "\n";
+  cout << "--------------" << "\n";
+  segment_tree.update(0, 5, 10);
+  cout << segment_tree.query(2, 6) << "\n";
+  cout << segment_tree.query(4, 7) << "\n";
+  cout << "--------------" << "\n";
+
 }
