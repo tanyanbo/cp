@@ -47,7 +47,7 @@ class SegmentTree {
     st[node] = st[node*2 + 1] + st[node*2 + 2];
   }
  public:
-  SegmentTree(vector<int> &v, int pad = 0) {
+  explicit SegmentTree(vector<int> &v, int pad = 0) {
     int temp = 1;
     while (temp < v.size()) {
       temp *= 2;
