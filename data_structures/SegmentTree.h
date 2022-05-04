@@ -14,6 +14,7 @@ using namespace std;
 class SegmentTree {
   int n;
   vector<ll> st, lazy;
+  vector<int> vCopy;
   void build(int start, int end, int node, vector<int> &v) {
     if (start==end) {
       st[node] = v[start];
@@ -73,10 +74,11 @@ class SegmentTree {
     n = temp;
     lazy = vector<ll>(4*n, 0);
     int sz = (int) v.size();
+    vCopy = v;
     for (int i = 0; i < temp - sz; i++)
-      v.push_back(pad);
+      vCopy.push_back(pad);
     st = vector<ll>(4*n);
-    build(0, n - 1, 0, v);
+    build(0, n - 1, 0, vCopy);
   }
 
   ll query(int l, int r) {
