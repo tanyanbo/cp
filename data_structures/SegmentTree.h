@@ -7,11 +7,13 @@
 
 #include <vector>
 
+typedef long long ll;
+
 using namespace std;
 
 class SegmentTree {
   int n;
-  vector<int> st, lazy;
+  vector<ll> st, lazy;
   void build(int start, int end, int node, vector<int> &v) {
     if (start==end) {
       st[node] = v[start];
@@ -23,19 +25,20 @@ class SegmentTree {
     st[node] = st[node*2 + 1] + st[node*2 + 2];
   }
 
-  int query(int start, int end, int l, int r, int node) {
-    if (l > end or r < start)
+  ll query(int start, int end, int l, int r, int node) {
+    if (end < l or start > r)
       return 0;
     if (lazy[node]) {
       st[node] += lazy[node]*(end - start + 1);
-      lazy[node*2 + 1] = lazy[node], lazy[node*2 + 2] = lazy[node];
+      if (start!=end)
+        lazy[node*2 + 1] += lazy[node], lazy[node*2 + 2] += lazy[node];
       lazy[node] = 0;
     }
-    if (l <= start and r >= end)
+    if (start >= l and end <= r)
       return st[node];
     int mid = (start + end)/2;
-    int q1 = query(start, mid, l, r, node*2 + 1);
-    int q2 = query(mid + 1, end, l, r, node*2 + 2);
+    ll q1 = query(start, mid, l, r, node*2 + 1);
+    ll q2 = query(mid + 1, end, l, r, node*2 + 2);
     return q1 + q2;
   }
 
@@ -68,15 +71,15 @@ class SegmentTree {
       temp *= 2;
     }
     n = temp;
-    lazy = vector<int>(4*n, 0);
+    lazy = vector<ll>(4*n, 0);
     int sz = (int) v.size();
     for (int i = 0; i < temp - sz; i++)
       v.push_back(pad);
-    st = vector<int>(4*n);
+    st = vector<ll>(4*n);
     build(0, n - 1, 0, v);
   }
 
-  int query(int l, int r) {
+  ll query(int l, int r) {
     return query(0, n - 1, l, r, 0);
   }
 
